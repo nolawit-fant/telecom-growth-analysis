@@ -1,5 +1,6 @@
 import pandas as pd
 import psycopg2
+from sqlalchemy import create_engine
 
 class PostgresConnection:
     def __init__(self, dbname, user, password, host='localhost', port='5432'):
@@ -24,6 +25,16 @@ class PostgresConnection:
             print("Connected to PostgreSQL database!")
         except Exception as e:
             print(f"Error: {e}")
+    def write_dataframe_to_db(self, df, table_name):
+        try:
+        # Create SQLAlchemy engine using the connection parameters from the PostgresConnection class
+            engine = create_engine(f'postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbname}')
+        
+        # Write DataFrame to SQL table, replacing if the table already exists
+            df.to_sql(table_name, engine, if_exists='replace', index=False)
+            print(f"Data successfully written to table {table_name}.")
+        except Exception as e:
+            print(f"Error writing DataFrame to table: {e}")
 
     def execute_query(self, query):
         try:
