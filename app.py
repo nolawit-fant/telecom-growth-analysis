@@ -21,13 +21,6 @@ st.sidebar.title("Navigation")
 page = st.sidebar.radio("Go to", ["User Overview Analysis", "User Engagement Analysis", 
                                   "Experience Analysis", "Satisfaction Analysis"])
 
-# Sample Data to demonstrate plots
-data = pd.DataFrame({
-    'User': ['A', 'B', 'C', 'D', 'E'],
-    'Engagement': [100, 150, 200, 250, 300],
-    'Experience': [4, 5, 3, 4, 5],
-    'Satisfaction': [80, 90, 70, 85, 95]
-})
 
 
 # Sidebar for customization options
@@ -39,7 +32,7 @@ st.sidebar.markdown("Provide PostgreSQL database connection details below.")
 # Function to fetch data from PostgreSQL
 
 # Assuming PostgresConnection is a custom class that manages the connection
-db = PostgresConnection(dbname='telecom', user='postgres', password='postgres')
+db = PostgresConnection(dbname='telecom', user='postgres', password='postgres',host='192.168.1.3')
 
 # Connect to the database
 db.connect()
@@ -58,8 +51,8 @@ try:
         df_cleaned = pd.DataFrame(result, columns=[desc[0] for desc in db.cursor.description])
         
         # Display the DataFrame to verify
-        print(df_cleaned.info())
-        print(df_cleaned.head())  # Show the first few rows for quick inspection
+        # print(df_cleaned.info())
+        # print(df_cleaned.head())  # Show the first few rows for quick inspection
     else:
         print("No data returned or no cursor description available.")
 except Exception as e:
@@ -67,8 +60,6 @@ except Exception as e:
 finally:
     # Close the connection to the database
     db.close_connection()
-
-
 
 
 # Page 1: User Overview Analysis
@@ -79,7 +70,15 @@ if page == "User Overview Analysis":
     # Example Plot - Bar chart for User Engagement
     df_user_behavior = aggregate_user_behavior(df_cleaned)
     metrics = analyze_basic_metrics(df_user_behavior)
-    plot_duration_histogram(metrics, bins=100)
+    
+    fig1, ax1 = plt.subplots()
+    plot_duration_histogram(metrics, bins=100)  # Pass the axis to plot on
+    st.pyplot(fig1, clear_figure=True)  # Ensure the figure is displayed
+
+        # Plot Variable Histograms
+    fig2, ax2 = plt.subplots()
+    plot_variable_histograms(metrics)  # Pass the axis to plot on
+    st.pyplot(fig2, clear_figure=True)
 
 # Page 2: User Engagement Analysis
 elif page == "User Engagement Analysis":
