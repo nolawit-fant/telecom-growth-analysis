@@ -34,20 +34,42 @@ data = pd.DataFrame({
 st.sidebar.header("Database Connection")
 st.sidebar.markdown("Provide PostgreSQL database connection details below.")
 
+
+
 # Function to fetch data from PostgreSQL
+
+# Assuming PostgresConnection is a custom class that manages the connection
 db = PostgresConnection(dbname='telecom', user='postgres', password='postgres')
+
+# Connect to the database
 db.connect()
 
-# Query the table to verify the write
-query = "SELECT * FROM xdr_data_cleaned"
-result = db.execute_query(query)
+# Try-except block to catch any errors during the query execution
+try:
+    # Query the table
+    query = "SELECT * FROM xdr_data_cleaned"
+    
+    # Execute the query
+    result = db.execute_query(query)
+    
+    # Check if the result is not empty and the cursor description exists
+    if result and db.cursor.description:
+        # Convert result to DataFrame using the column names from the cursor's description
+        df_cleaned = pd.DataFrame(result, columns=[desc[0] for desc in db.cursor.description])
+        
+        # Display the DataFrame to verify
+        print(df_cleaned.info())
+        print(df_cleaned.head())  # Show the first few rows for quick inspection
+    else:
+        print("No data returned or no cursor description available.")
+except Exception as e:
+    print(f"An error occurred: {e}")
+finally:
+    # Close the connection to the database
+    db.close_connection()
 
-# Convert result to a DataFrame and display the information
-df_cleaned = pd.DataFrame(result, columns=[desc[0] for desc in db.cursor.description])
 
 
-# Close the connection
-db.close_connection()
 
 # Page 1: User Overview Analysis
 if page == "User Overview Analysis":
