@@ -14,7 +14,7 @@ The investor is interested in purchasing TellCo, an existing mobile service prov
 Approach  
 The project is divided and implemented by the following phases
 
-User Overview analysis
-User Engagement analysis
-User Experience analysis
-User Satisfaction analysis
+User Overview analysis 
+User Engagement analysis 
+User Experience analysis 
+User Satisfaction analysis 
